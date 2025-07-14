@@ -1,0 +1,91 @@
+from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
+
+remove_keyboard = ReplyKeyboardRemove()
+
+uz = "🇺🇿 O'zbekcha"
+ru = "🇷🇺 Русский"
+back_uz = '⬅️ Ortga'
+back_ru = '⬅️ Назад'
+
+def phone_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="📱 Telefon raqam", request_contact=True)]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="📱 Номер телефона", request_contact=True)]], resize_keyboard=True)
+    }
+    return markup.get(lang)
+
+def menu_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🍽 Menyu')], [KeyboardButton(text="📥 Buyurtmalarim"), KeyboardButton(text="🛒 Savatcham")], [KeyboardButton(text='ℹ️ Biz haqimizda'), KeyboardButton(text="📍 Filiallarimiz")], [KeyboardButton(text='⭐ Baholash')], [KeyboardButton('⚙️ Sozlamalar')]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🍽 Меню')], [KeyboardButton(text="📥 Мои заказы"), KeyboardButton(text="🛒 Корзинка")], [KeyboardButton(text='ℹ️ О нас'), KeyboardButton(text="📍 Наши филиалы")], [KeyboardButton(text='⭐ Оценить')], [KeyboardButton('⚙️ Настройки')]], resize_keyboard=True)
+    }
+    return markup.get(lang)
+
+def settings_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='✏️ Ism o\'zgartirish'), KeyboardButton(text='📱 Telefon raqam o\'zgartirish')], [KeyboardButton(text='🇷🇺 Til o\'zgartirish')], [KeyboardButton(text=back_uz)]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='✏️ Изменить имя'), KeyboardButton(text='📱 Изменить телефон номер')], [KeyboardButton(text='🇺🇿 Изменить язык')], [KeyboardButton(text=back_ru)]], resize_keyboard=True)
+    }
+    
+    return markup.get(lang)
+
+lang_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="🇺🇿 O'zbekcha"),
+            KeyboardButton(text="🇷🇺 Русский")
+        ]
+    ], resize_keyboard=True
+)
+
+def back_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=back_uz)]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=back_ru)]], resize_keyboard=True)
+    }
+    
+    return markup.get(lang)
+
+def rating_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="⭐⭐⭐⭐⭐ Hammasi a'lo")], [KeyboardButton(text="⭐⭐⭐⭐ Yaxshi")], [KeyboardButton(text="⭐⭐⭐ O'rta")], [KeyboardButton(text="❤️ Bo'ladi")], [KeyboardButton(text="👎 Juda yomon")], [KeyboardButton(text=back_uz)]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="⭐⭐⭐⭐⭐ Всё хорошо")], [KeyboardButton(text="⭐⭐⭐⭐ Хороший")], [KeyboardButton(text="⭐⭐⭐ Средний")], [KeyboardButton(text="❤️ Будет")], [KeyboardButton(text="👎 Очень плохо")], [KeyboardButton(text=back_ru)]], resize_keyboard=True)
+    }
+    
+    return markup.get(lang)
+
+staff_start_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Admin")
+        ],
+        [
+            KeyboardButton(text='Oshpaz'),
+            KeyboardButton(text='Yetkazib beruvchi')
+        ]
+    ], resize_keyboard=True
+)
+
+admin_menu_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="🍽️ Menu")            
+        ],
+        [
+          KeyboardButton('👥 Foydalanuvchilar')  
+        ],
+        [
+            KeyboardButton(text="📍 Filiallar"),
+            KeyboardButton(text="🦺 Ishchilar")
+        ]
+    ], resize_keyboard=True
+)
+
+admin_branch_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="➕ Filial qo'shish"),
+            KeyboardButton(text="📍 Filiallar")
+        ]
+    ]
+)
