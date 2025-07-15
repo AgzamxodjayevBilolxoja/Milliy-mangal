@@ -40,7 +40,8 @@ async def password_handler(message: types.Message, state: FSMContext):
         await message.answer(f'Siz haqiqatdan ham {role} ekansiz!')
         await message.answer(f'Xush kelibsiz {role}')
         if role == "Admin":
-            await message.answer('Buyruqlardan birini tanlang!', admin_menu_markup)
+            await message.answer('Buyruqlardan birini tanlang!',reply_markup= admin_menu_markup)
+            await state.finish()
     else:
         await message.answer('❌ Parol xato!')
         await message.answer('Qaytatdan urinib ko\'ring!')

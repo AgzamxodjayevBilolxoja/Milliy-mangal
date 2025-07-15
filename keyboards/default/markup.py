@@ -1,5 +1,8 @@
 from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 
+from loader import db
+from services.database.sql import get_branches
+
 remove_keyboard = ReplyKeyboardRemove()
 
 uz = "🇺🇿 O'zbekcha"
@@ -85,7 +88,46 @@ admin_branch_markup = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="➕ Filial qo'shish"),
-            KeyboardButton(text="📍 Filiallar")
+            KeyboardButton(text="📍 Filiallarni ko'rish")
         ]
-    ]
+    ], resize_keyboard=True
+)
+
+def get_branches_markup(branches, lang):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    for branch in branches:
+        markup.insert(KeyboardButton(text=branch[0]))
+    if lang == uz:
+        markup.add(KeyboardButton(text=back_uz))
+    else:
+        markup.add(KeyboardButton(text=back_ru))
+    return markup
+
+admin_branch_update_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="🟢 O'zgartirish"),
+            KeyboardButton(text="🔴 O'chirish")
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+branch_update_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="📍 Joylashuvni o'zgartirish"),
+        ],
+        [   
+            KeyboardButton(text="✏️ Nomini o'zgartirish"),
+        ],
+        [  
+            KeyboardButton(text="🕛 Ishlash vaqtini o'zgartirish")
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
 )

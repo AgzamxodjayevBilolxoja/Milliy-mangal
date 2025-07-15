@@ -18,9 +18,21 @@ class Rating(StatesGroup):
 class StaffRegister(StatesGroup):
     role = State()
     password = State()
+    
+class AdminMain(StatesGroup):
+    branch = State()
 
 class AddBranch(StatesGroup):
     location = State()
     name = State()
     opening_time = State()
     yes_or_no = State()
+
+class UserBranch(StatesGroup):
+    branch = State()
+
+class UpdateBranch(StatesGroup):
+    step_one = State()
+    update = State()
+    choose_command = State()
+    update_field = State()

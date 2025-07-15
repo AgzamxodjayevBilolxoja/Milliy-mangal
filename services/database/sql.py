@@ -46,9 +46,10 @@ VALUES (?, ?, ?)
 create_table_branhes = """
 CREATE TABLE IF NOT EXISTS branches(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-latitude FLOAT NOT NULL,
-longitude FLOAT NOT NULL,
-name VARCHAR NOT NULL
+latitude FLOAT NOT NULL UNIQUE,
+longitude FLOAT NOT NULL UNIQUE,
+name VARCHAR NOT NULL UNIQUE,
+opening_time VARCHAR NOT NULL
 )
 """
 
@@ -89,4 +90,33 @@ SELECT * FROM staff WHERE chat_id=?
 
 get_staffs = """
 SELECT chat_id FROM staff WHERE role=?
+"""
+
+add_branch = """
+INSERT INTO branches(latitude, longitude, name, opening_time)
+VALUES(?, ?, ?, ?)
+"""
+
+get_branches = """
+SELECT name FROM branches
+"""
+
+get_branch_by_name = """
+SELECT * FROM branches WHERE name=?
+"""
+
+update_location_branch = """
+UPDATE branches SET latitude=? AND longitude=? WHERE id=?
+"""
+
+update_name_branch = """
+UPDATE branches SET name=? WHERE id=?
+"""
+
+update_time_branch = """
+UPDATE branches SET opening_time=? WHERE id=?
+"""
+
+delete_branch = """
+DELETE FROM branches WHERE id=?
 """
