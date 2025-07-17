@@ -120,3 +120,72 @@ UPDATE branches SET opening_time=? WHERE id=?
 delete_branch = """
 DELETE FROM branches WHERE id=?
 """
+
+create_table_category = """
+CREATE TABLE IF NOT EXISTS category(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name_uz VARCHAR NOT NULL,
+name_ru VARCHAR NOT NULL
+)
+"""
+
+create_table_foods = """
+CREATE TABLE IF NOT EXISTS foods(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+category_id INTEGER NOT NULL,
+name_uz VARCHAR NOT NULL,
+name_ru VARCHAR NOT NULL,
+description_uz TEXT,
+description_ru TEXT,
+price INTEGER NOT NULL,
+image TEXT NOT NULL
+)
+"""
+
+get_categories = """
+SELECT * FROM category
+"""
+
+add_category = """
+INSERT INTO category(name_uz, name_ru)
+VALUES(?, ?)
+"""
+
+delete_category_by_name_uz = """
+DELETE FROM category WHERE name_uz = ?
+"""
+
+get_category_by_name_uz = """
+SELECT * FROM category WHERE name_uz = ?
+"""
+
+add_product = """
+INSERT INTO foods(category_id, name_uz, name_ru, description_uz, description_ru, price, image)
+VALUES(?, ?, ?, ?, ?, ?, ?)
+"""
+
+get_products = """
+SELECT * FROM foods
+"""
+
+get_product_by_name_uz = """
+SELECT * FROM foods WHERE name_uz=?
+"""
+
+get_product_by_name_ru = """
+SELECT * FROM foods WHERE name_ru=?
+"""
+
+get_category_by_id = """
+SELECT * FROM category WHERE id=?
+"""
+
+delete_product = """
+DELETE FROM foods WHERE id=?
+"""
+
+def update_product(field):
+    sql = f"""
+UPDATE foods SET {field}=? WHERE id=?
+"""
+    return sql

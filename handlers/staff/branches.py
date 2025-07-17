@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from loader import dp2, db
-from keyboards.default.markup import remove_keyboard,admin_menu_markup, admin_branch_markup, uz, get_branches_markup, back_uz, admin_branch_update_markup, branch_update_markup, back_markup
+from keyboards.default.markup import remove_keyboard,admin_menu_markup, admin_branch_markup, uz, get_branches_markup, back_uz, admin_update_markup, branch_update_markup, back_markup
 from keyboards.inline.markup import yes_or_no_markup
 from services.database.sql import check_staff_by_chat_id, add_branch, get_branch_by_name, get_branches, update_location_branch, update_name_branch, update_time_branch, delete_branch
 from states.states import AddBranch, AdminMain, UpdateBranch
@@ -97,7 +97,7 @@ async def get_branch_handler(message: types.Message, state: FSMContext):
     await message.answer_location(latitude=branch[1], longitude=branch[2])
     await state.update_data(id=branch[0])
     await message.answer(f"{branch[3]} ---------- {branch[4]}")
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_branch_update_markup)
+    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_update_markup)
     await UpdateBranch.update.set()
 
 @dp2.message_handler(text=back_uz, state=UpdateBranch.update)

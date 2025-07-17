@@ -21,6 +21,7 @@ class StaffRegister(StatesGroup):
     
 class AdminMain(StatesGroup):
     branch = State()
+    menu = State()
 
 class AddBranch(StatesGroup):
     location = State()
@@ -36,3 +37,36 @@ class UpdateBranch(StatesGroup):
     update = State()
     choose_command = State()
     update_field = State()
+
+class AdminCategory(StatesGroup):
+    step_one = State()
+
+class AddCategory(StatesGroup):
+    name_uz = State()
+    name_ru = State()
+
+class GetCategories(StatesGroup):
+    step_one = State()
+    delete = State()
+
+class AdminProduct(StatesGroup):
+    step_one = State()
+    choose = State()
+    command = State()
+    update = State()
+    name_uz = State()
+    name_ru = State()
+    description_uz = State()
+    description_ru = State()
+    price = State()
+    image = State()
+    
+class AddProduct(StatesGroup):
+    category = State()
+    name_uz = State()
+    name_ru = State()
+    description_uz = State()
+    description_ru = State()
+    price = State()
+    image = State()
+    check = State()

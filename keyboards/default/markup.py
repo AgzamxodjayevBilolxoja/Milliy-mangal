@@ -72,7 +72,7 @@ staff_start_markup = ReplyKeyboardMarkup(
 admin_menu_markup = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="🍽️ Menu")            
+            KeyboardButton(text="🍽️ Menyu o'zgartirish")            
         ],
         [
           KeyboardButton('👥 Foydalanuvchilar')  
@@ -103,7 +103,7 @@ def get_branches_markup(branches, lang):
         markup.add(KeyboardButton(text=back_ru))
     return markup
 
-admin_branch_update_markup = ReplyKeyboardMarkup(
+admin_update_markup = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="🟢 O'zgartirish"),
@@ -130,4 +130,101 @@ branch_update_markup = ReplyKeyboardMarkup(
             KeyboardButton(text=back_uz)
         ]
     ], resize_keyboard=True
+)
+
+change_menu_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton('Kategoriyalar'),
+            KeyboardButton('Ovqatlar')
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+admin_category_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="➕ Kategoriya qo'shish"),
+            KeyboardButton(text="Kategoriyalarni ko'rish")
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+def get_categories_markup(categories, lang):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    if lang == uz:
+        for category in categories:
+            markup.insert(KeyboardButton(text=category[1]))
+        markup.add(KeyboardButton(text=back_uz))
+    else:
+        for category in categories:
+            markup.insert(KeyboardButton(text=category[2]))
+        markup.add(KeyboardButton(text=back_ru))
+    return markup
+
+delete_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text='🔴 O\'chirish')
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+admin_foods_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="➕ Ovqat qo'shish"),
+            KeyboardButton(text="Ovqatlarni ko'rish")
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+def product_markup(products, lang):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    if lang == uz:
+        for product in products:
+            markup.insert(KeyboardButton(text=product[2]))
+        markup.add(KeyboardButton(text=back_uz))
+    else:
+        for product in products:
+            markup.insert(KeyboardButton(text=product[3]))
+        markup.add(KeyboardButton(text=back_ru))
+    return markup
+
+admin_food_update_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="🇺🇿 O'zbekcha nomni o'zgartirish")
+        ],
+        [   
+            KeyboardButton(text="🇷🇺 Ruscha nomni o'zgartirish")
+        ],
+        [
+            KeyboardButton(text="🇺🇿 O'zbekcha ma'lumotni o'zgartirish")
+        ],
+        [   
+            KeyboardButton(text="🇷🇺 Ruscha ma'lumotni o'zgartirish")
+        ],
+        [
+            KeyboardButton(text="🤑 Narxni o'zgartirish")
+        ],
+        [  
+            KeyboardButton(text="🖼️ Rasmni o'zgartirish")
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ]
 )

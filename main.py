@@ -2,7 +2,7 @@ from multiprocessing import Process
 from aiogram.utils.executor import start_polling
 from loader import dp, dp2, bot, bot2, db
 from config import ADMINS
-from services.database.sql import create_table_user, create_table_rating, create_table_branhes, create_table_staff, create_staff
+from services.database.sql import create_table_user, create_table_rating, create_table_branhes, create_table_staff, create_staff, create_table_category, create_table_foods
 import handlers
 
 
@@ -35,6 +35,8 @@ def main():
     db.execute(create_table_rating, commit=True)
     db.execute(create_table_branhes, commit=True)
     db.execute(create_table_staff, commit=True)
+    db.execute(create_table_category, commit=True)
+    db.execute(create_table_foods, commit=True)
     # db.execute(create_staff, ('Admin', 'Admin'), commit=True)
 
     p1 = Process(target=run_bot1)
