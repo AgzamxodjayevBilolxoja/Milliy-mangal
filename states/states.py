@@ -70,3 +70,26 @@ class AddProduct(StatesGroup):
     price = State()
     image = State()
     check = State()
+
+class Staff(StatesGroup):
+    step_one = State()
+    # Chef
+    chef_state = State()
+    # Chef create
+    chef_name = State()
+    chef_branch = State()
+    chef_password = State()
+    # Chef Get-Update-Delete
+    get_chef = State()
+    command_chef = State()
+    update = State()
+    # Deliverman
+    deliverman_state = State()
+    # Deliverman Create
+    deliverman_name = State()
+    deliverman_branch = State()
+    deliverman_password = State()
+    # Deliverman Get-Update-Delete
+    get_deliverman = State()
+    command_delliverman = State()
+    update_deliverman = State()

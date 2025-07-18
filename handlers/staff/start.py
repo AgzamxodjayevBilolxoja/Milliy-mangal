@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from loader import dp2, db
-from keyboards.default.markup import staff_start_markup, remove_keyboard, admin_menu_markup
+from keyboards.default.markup import staff_start_markup, remove_keyboard, admin_menu_markup, back_uz
 from states.states import StaffRegister
 from services.database.sql import check_staff, update_staff, check_staff_by_chat_id
 
@@ -45,3 +45,9 @@ async def password_handler(message: types.Message, state: FSMContext):
     else:
         await message.answer('❌ Parol xato!')
         await message.answer('Qaytatdan urinib ko\'ring!')
+
+@dp2.message_handler(text=back_uz, state="*")
+async def command_chef_handler(message: types.Message, state: FSMContext):
+    await message.delete()
+    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
+    await state.finish()

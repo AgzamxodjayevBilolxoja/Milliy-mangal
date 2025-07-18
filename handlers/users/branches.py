@@ -20,7 +20,7 @@ async def branches_handler(message: types.Message):
         await message.answer('Выберите одну из филиалов!', reply_markup=get_branches_markup(branches, ru))
     await UserBranch.branch.set()
 
-@dp.message_handler(lambda x: x.text in [branch[0] for branch in db.execute(get_branches, fetchall=True)], state=UserBranch.branch)
+@dp.message_handler(lambda x: x.text in [branch[3] for branch in db.execute(get_branches, fetchall=True)], state=UserBranch.branch)
 async def get_branch_handler(message: types.Message):
     branch = db.execute(get_branch_by_name, (message.text, ), fetchone=True)
     await message.delete()

@@ -22,7 +22,7 @@ async def branches_handler(message: types.Message):
     else:
         await message.answer('Sizda bu buyruq uchun ruxsat yo\'q!')
         await message.answer('/start kommandasi orqali o\'zingizning ishingizni toping!')
-
+    
 @dp2.message_handler(text="➕ Filial qo'shish", state=AdminMain.branch)
 async def branches_handler(message: types.Message):
     await message.delete()
@@ -76,11 +76,10 @@ async def yes_or_no_handler(callback: types.CallbackQuery, state: FSMContext):
         except:
             await callback.message.answer('Qandaydiq xato sodir bo\'di.')
             await callback.message.answer('Bu filialni oldin qo\'shgan bo\'lishingiz mumkin. Iltimos tekshirib ko\'ring!')
-            await callback.message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
         await state.finish()
     else:
         await callback.message.answer('❌ Filial qo\'shilmadi!')
-        await callback.message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
+    await callback.message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
     await state.finish()
 
 @dp2.message_handler(text="📍 Filiallarni ko'rish", state=AdminMain.branch)
@@ -90,7 +89,7 @@ async def branches_handler(message: types.Message):
     await message.answer('Filiallardan birini tanlang!', reply_markup=get_branches_markup(branches, uz))
     await UpdateBranch.step_one.set()
 
-@dp2.message_handler(lambda x: x.text in [branch[0] for branch in db.execute(get_branches, fetchall=True)], state=UpdateBranch.step_one)
+@dp2.message_handler(lambda x: x.text in [branch[3] for branch in db.execute(get_branches, fetchall=True)], state=UpdateBranch.step_one)
 async def get_branch_handler(message: types.Message, state: FSMContext):
     branch = db.execute(get_branch_by_name, (message.text, ), fetchone=True)
     await message.delete()
@@ -99,13 +98,6 @@ async def get_branch_handler(message: types.Message, state: FSMContext):
     await message.answer(f"{branch[3]} ---------- {branch[4]}")
     await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_update_markup)
     await UpdateBranch.update.set()
-
-@dp2.message_handler(text=back_uz, state=UpdateBranch.update)
-async def back_branches_handler(message: types.Message):
-    await message.delete()
-    branches = db.execute(get_branches, fetchall=True)
-    await message.answer('Filiallardan birini tanlang!', reply_markup=get_branches_markup(branches, uz))
-    await UpdateBranch.step_one.set()
 
 @dp2.message_handler(text="🟢 O'zgartirish", state=UpdateBranch.update)
 async def update_branch_handler(message: types.Message):
@@ -126,12 +118,6 @@ async def update_handler(message: types.Message, state: FSMContext):
         await message.answer('Yangi ishlash vaqtini yuboring!', reply_markup=back_markup(uz))
         await state.update_data(field='opening_time')
     await UpdateBranch.update_field.set()
-    
-@dp2.message_handler(text=back_uz, state=UpdateBranch.choose_command)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(state=UpdateBranch.choose_command)
 async def error_handler(message: types.Message):
@@ -183,12 +169,6 @@ async def update_branch_handler(message: types.Message, state: FSMContext):
         await message.answer('✅ Filial o\'chirildi!')
     except:
         await message.answer('❌ Nimadir xato ketdi!')
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
-@dp2.message_handler(text=back_uz, state=UpdateBranch.step_one)
-async def back_main_hadnler(message: types.Message, state: FSMContext):
-    await message.delete()
     await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
     await state.finish()
 

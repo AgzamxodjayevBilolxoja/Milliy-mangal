@@ -22,9 +22,3 @@ async def menu_hander(message: types.Message):
     else:
         await message.answer('Sizda bu buyruq uchun ruxsat yo\'q!')
         await message.answer('/start kommandasi orqali o\'zingizning ishingizni toping!')
-
-@dp2.message_handler(text=back_uz, state=AdminMain.menu)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()

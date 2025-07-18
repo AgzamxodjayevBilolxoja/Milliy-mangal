@@ -1,8 +1,4 @@
 from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
-
-from loader import db
-from services.database.sql import get_branches
-
 remove_keyboard = ReplyKeyboardRemove()
 
 uz = "🇺🇿 O'zbekcha"
@@ -75,9 +71,6 @@ admin_menu_markup = ReplyKeyboardMarkup(
             KeyboardButton(text="🍽️ Menyu o'zgartirish")            
         ],
         [
-          KeyboardButton('👥 Foydalanuvchilar')  
-        ],
-        [
             KeyboardButton(text="📍 Filiallar"),
             KeyboardButton(text="🦺 Ishchilar")
         ]
@@ -89,6 +82,9 @@ admin_branch_markup = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="➕ Filial qo'shish"),
             KeyboardButton(text="📍 Filiallarni ko'rish")
+        ],
+        [
+            KeyboardButton(back_uz)
         ]
     ], resize_keyboard=True
 )
@@ -96,7 +92,7 @@ admin_branch_markup = ReplyKeyboardMarkup(
 def get_branches_markup(branches, lang):
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     for branch in branches:
-        markup.insert(KeyboardButton(text=branch[0]))
+        markup.insert(KeyboardButton(text=branch[3]))
     if lang == uz:
         markup.add(KeyboardButton(text=back_uz))
     else:
@@ -228,3 +224,53 @@ admin_food_update_markup = ReplyKeyboardMarkup(
         ]
     ]
 )
+
+admin_staff_markup = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="🧑‍🍳 Oshpazlar"),
+            KeyboardButton('🚚 Yetkazib beruvchilar')
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+admin_chef_markup = ReplyKeyboardMarkup(
+    keyboard=[
+         [
+            KeyboardButton(text="➕ Oshpaz qo'shish"),
+            KeyboardButton('🧑‍🍳 Oshpazlarni ko\'rish')
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+def get_chefs_markup(chefs):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    for chef in chefs:
+        markup.insert(KeyboardButton(text=chef[4]))
+    markup.add(KeyboardButton(text=back_uz))
+    return markup
+
+admin_deliverman_markup = ReplyKeyboardMarkup(
+    keyboard=[
+         [
+            KeyboardButton(text="➕ Yetkazib beruvchi qo'shish"),
+            KeyboardButton('🚚 Yetkazib beruvchilarni ko\'rish')
+        ],
+        [
+            KeyboardButton(text=back_uz)
+        ]
+    ], resize_keyboard=True
+)
+
+def get_delivermen_markup(delivermen):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    for deliverman in delivermen:
+        markup.insert(KeyboardButton(text=deliverman[4]))
+    markup.add(KeyboardButton(text=back_uz))
+    return markup

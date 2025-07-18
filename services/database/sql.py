@@ -67,7 +67,9 @@ CREATE TABLE IF NOT EXISTS staff(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 chat_id INTEGER UNIQUE,
 role VARCHAR NOT NULL,
-password VARCHAR NOT NULL UNIQUE
+password VARCHAR NOT NULL UNIQUE,
+name VARCHAR,
+branch INTEGER
 )
 """
 
@@ -97,8 +99,8 @@ INSERT INTO branches(latitude, longitude, name, opening_time)
 VALUES(?, ?, ?, ?)
 """
 
-get_branches = """
-SELECT name FROM branches
+get_branch_by_id = """
+SELECT * FROM branches WHERE id=?
 """
 
 get_branch_by_name = """
@@ -189,3 +191,40 @@ def update_product(field):
 UPDATE foods SET {field}=? WHERE id=?
 """
     return sql
+
+add_chef = """
+INSERT INTO staff(role, password, name, branch)
+VALUES('Chef', ?, ?, ?)
+"""
+add_deliverman = """
+INSERT INTO staff(role, password, name, branch)
+VALUES('Deliverman', ?, ?, ?)
+"""
+
+delete_staff_by_id = """
+DELETE FROM staff WHERE id=?
+"""
+
+get_all_chefs = """
+SELECT * FROM staff WHERE role='Chef'
+"""
+
+get_all_deliverman = """
+SELECT * FROM staff WHERE role='Deliverman'
+"""
+
+get_chef_by_name = """
+SELECT * FROM staff WHERE role='Chef' AND name=?
+"""
+
+update_chef_branch = """
+UPDATE staff SET branch=? WHERE id=?
+"""
+
+update_deliverman_branch = """
+UPDATE staff SET branch=? WHERE id=?
+"""
+
+get_delivermen_by_name = """
+SELECT * FROM staff WHERE role='Deliverman' AND name=?
+"""

@@ -13,24 +13,12 @@ async def admin_products_handler(message: types.Message):
     await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_foods_markup)
     await AdminProduct.step_one.set()
 
-@dp2.message_handler(text=back_uz, state=AdminProduct.step_one)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
 @dp2.message_handler(text="➕ Ovqat qo'shish", state=AdminProduct.step_one)
 async def add_product_handler(message: types.Message):
     await message.delete()
     categories = db.execute(get_categories, fetchall=True)
     await message.answer(text='Yangi ovqat qo\'shish uchun kategoriyalardan birini tanlang!', reply_markup=get_categories_markup(categories, uz))
     await AddProduct.category.set()
-
-@dp2.message_handler(text=back_uz, state=AddProduct.category)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(lambda x: x.text in [category[1] for category in db.execute(get_categories, fetchall=True)], state=AddProduct.category)
 async def name_uz_gandler(message: types.Message, state: FSMContext):
@@ -39,24 +27,12 @@ async def name_uz_gandler(message: types.Message, state: FSMContext):
     await message.answer('Ovqatning 🇺🇿 O\'zbekcha nomini kiriting!', reply_markup=back_markup(uz))
     await AddProduct.name_uz.set()
 
-@dp2.message_handler(text=back_uz, state=AddProduct.name_uz)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
 @dp2.message_handler(state=AddProduct.name_uz)
 async def name_ru_handler(message: types.Message, state: FSMContext):
     await state.update_data(name_uz=message.text)
     await message.delete()
     await message.answer('Endi ovqatning 🇷🇺 Ruscha nomini kiriting!', reply_markup=back_markup(uz))
     await AddProduct.name_ru.set()
-
-@dp2.message_handler(text=back_uz, state=AddProduct.name_ru)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(state=AddProduct.name_ru)
 async def description_uz_handler(message: types.Message, state: FSMContext):
@@ -65,24 +41,12 @@ async def description_uz_handler(message: types.Message, state: FSMContext):
     await message.answer('Endi ovqat haqida 🇺🇿 O\'zbekcha ma\'lumot kiriting!', reply_markup=back_markup(uz))
     await AddProduct.description_uz.set()
 
-@dp2.message_handler(text=back_uz, state=AddProduct.description_uz)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
 @dp2.message_handler(state=AddProduct.description_uz)
 async def description_ru_handler(message: types.Message, state: FSMContext):
     await state.update_data(description_uz=message.text)
     await message.delete()
     await message.answer('Endi ovqat haqida 🇷🇺 Ruscha ma\'lumot kiriting!', reply_markup=back_markup(uz))
     await AddProduct.description_ru.set()
-
-@dp2.message_handler(text=back_uz, state=AddProduct.description_ru)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(state=AddProduct.description_ru)
 async def price_handler(message: types.Message, state: FSMContext):
@@ -91,24 +55,12 @@ async def price_handler(message: types.Message, state: FSMContext):
     await message.answer('Endi ovqatning narxini kiriting! Masalan 34000 E\'tbor bering harf va belgilardan foydalanmang', reply_markup=back_markup(uz))
     await AddProduct.price.set()
 
-@dp2.message_handler(text=back_uz, state=AddProduct.price)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
 @dp2.message_handler(state=AddProduct.price)
 async def image_handler(message: types.Message, state: FSMContext):
     await state.update_data(price=message.text)
     await message.delete()
     await message.answer('Endi ovqatning rasmini yuboring!', reply_markup=back_markup(uz))
     await AddProduct.image.set()
-
-@dp2.message_handler(text=back_uz, state=AddProduct.image)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(content_types=types.ContentType.PHOTO, state=AddProduct.image)
 async def add_product_finish_handler(message: types.Message, state: FSMContext):
@@ -134,12 +86,6 @@ Kategoriya: {category}
 """
     await message.answer_photo(photo=image, caption=answer, reply_markup=yes_or_no_markup)
     await AddProduct.check.set()
-
-@dp2.message_handler(text=back_uz, state=AddProduct.check)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.callback_query_handler(state=AddProduct.check)
 async def add_product_finish_handler(callback: types.CallbackQuery, state: FSMContext):
@@ -180,12 +126,6 @@ async def get_products_handler(message: types.Message):
     await message.answer('Ovqatlardan birini tanlang!', reply_markup=product_markup(products, uz))
     await AdminProduct.choose.set()
 
-@dp2.message_handler(text=back_uz, state=AdminProduct.choose)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
 @dp2.message_handler(lambda x: x.text in [product[2] for product in db.execute(get_products, fetchall=True)], state=AdminProduct.choose)
 async def name_uz_gandler(message: types.Message, state: FSMContext):
     product = db.execute(get_product_by_name_uz, (message.text, ), fetchone=True)
@@ -204,12 +144,6 @@ Kategoriya: {category[1]}
     await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_update_markup)
     await AdminProduct.command.set()
 
-@dp2.message_handler(text=back_uz, state=AdminProduct.command)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
 @dp2.message_handler(text="🔴 O'chirish", state=AdminProduct.command)
 async def delete_product_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
@@ -225,12 +159,6 @@ async def update_product_handler(message: types.Message):
     await message.delete()
     await message.answer('Ovqatni o\'zgartirish uchun buyruqlardan birini tanlang!', reply_markup=admin_food_update_markup)
     await AdminProduct.update.set()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.update)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(text="🇺🇿 O'zbekcha nomni o'zgartirish", state=AdminProduct.update)
 async def name_uz_handler(message: types.Message):
@@ -267,42 +195,6 @@ async def image_handler(message: types.Message):
     await message.delete()
     await message.answer("🖼️ Rasm yuboring!", reply_markup=back_markup(uz))
     await AdminProduct.image.set()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.name_uz)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.name_ru)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.description_uz)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.description_ru)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.price)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
-
-@dp2.message_handler(text=back_uz, state=AdminProduct.image)
-async def back_main_handler(message: types.Message, state: FSMContext):
-    await message.delete()
-    await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
-    await state.finish()
 
 @dp2.message_handler(state=AdminProduct.name_uz)
 async def update_name_uz_handler(message: types.Message, state: FSMContext):
@@ -384,12 +276,12 @@ async def update_price_handler(message: types.Message, state: FSMContext):
     await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)
     await state.finish()
     
-@dp2.message_handler(state=AdminProduct.image)
+@dp2.message_handler(content_types=types.ContentType.PHOTO, state=AdminProduct.image)
 async def update_image_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     product_id = data.get('product_id')
     text = message.photo[-1].file_id
-    sql = update_product('price')
+    sql = update_product('image')
     db.execute(sql, (text, product_id), commit=True)
     await message.delete()
     await message.answer('✅ Mahsulot rasmi o\'zgartirildi!')
