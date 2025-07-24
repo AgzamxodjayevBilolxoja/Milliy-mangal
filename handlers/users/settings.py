@@ -2,21 +2,34 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from loader import dp, db
+from keyboards.inline.markup import language_markup
 from keyboards.default.markup import settings_markup, uz, back_uz, menu_markup, lang_markup, back_markup, phone_markup, ru, back_ru
-from states.states import Settings
+from states.states import Settings, Register
 from services.database.sql import change_name, change_phone, change_lang, check_user
 
 @dp.message_handler(text="⚙️ Sozlamalar")
 @dp.message_handler(text="⚙️ Настройки")
-async def settings_handler(message: types.Message):
+async def settings_handler(message: types.Message, state: FSMContext):
     user = db.execute(check_user, (message.from_user.id, ), fetchone=True)
-    lang = user[2]
-    await message.delete()
-    if lang == 'uz':
-        await message.answer(text='Buyruqni tanlang', reply_markup=settings_markup(uz))
+    if user:
+        lang = user[2]
+        await message.delete()
+        if lang == 'uz':
+            await message.answer(text='Buyruqni tanlang', reply_markup=settings_markup(uz))
+        else:
+            await message.answer(text='Выберите движение', reply_markup=settings_markup(ru))
+        await Settings.step_one.set()
     else:
-        await message.answer(text='Выберите движение', reply_markup=settings_markup(ru))
-    await Settings.step_one.set()
+        answer = f"""
+Assalomu alaykum <b>{message.from_user.first_name}</b>, men Milliy Mangal Botman.
+Здравствуйте <b>{message.from_user.first_name}</b>, я Mangal Burger Bot.
+
+Tilni tanlag!
+Выберите язык!
+    """
+        await message.answer(text=answer, reply_markup=language_markup)
+        await Register.lang.set()
+        
 
 @dp.message_handler(text="✏️ Ism o'zgartirish", state=Settings.step_one)
 @dp.message_handler(text="✏️ Изменить имя", state=Settings.step_one)

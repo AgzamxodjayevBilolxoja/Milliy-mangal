@@ -4,21 +4,33 @@ from aiogram.dispatcher import FSMContext
 from loader import dp, db
 from services.database.sql import check_user, get_branches, get_branch_by_name
 from keyboards.default.markup import get_branches_markup, uz, ru, back_uz, back_ru, menu_markup
-from states.states import UserBranch
+from keyboards.inline.markup import language_markup
+from states.states import UserBranch, Register
 
 
 @dp.message_handler(text="📍 Filiallarimiz")
 @dp.message_handler(text="📍 Наши филиалы")
 async def branches_handler(message: types.Message):
     user = db.execute(check_user, (message.from_user.id, ), fetchone=True)
-    lang = user[2]
-    await message.delete()
-    branches = db.execute(get_branches, fetchall=True)
-    if lang == 'uz':
-        await message.answer('Filiallardan birini tanlang!', reply_markup=get_branches_markup(branches, uz))
+    if user:
+        lang = user[2]
+        await message.delete()
+        branches = db.execute(get_branches, fetchall=True)
+        if lang == 'uz':
+            await message.answer('Filiallardan birini tanlang!', reply_markup=get_branches_markup(branches, uz))
+        else:
+            await message.answer('Выберите одну из филиалов!', reply_markup=get_branches_markup(branches, ru))
+        await UserBranch.branch.set()
     else:
-        await message.answer('Выберите одну из филиалов!', reply_markup=get_branches_markup(branches, ru))
-    await UserBranch.branch.set()
+        answer = f"""
+Assalomu alaykum <b>{message.from_user.first_name}</b>, men Milliy Mangal Botman.
+Здравствуйте <b>{message.from_user.first_name}</b>, я Mangal Burger Bot.
+
+Tilni tanlag!
+Выберите язык!
+    """
+        await message.answer(text=answer, reply_markup=language_markup)
+        await Register.lang.set()
 
 @dp.message_handler(lambda x: x.text in [branch[3] for branch in db.execute(get_branches, fetchall=True)], state=UserBranch.branch)
 async def get_branch_handler(message: types.Message):

@@ -41,7 +41,7 @@ def main():
     db.execute(create_table_cart, commit=True)
     db.execute(create_table_order_items, commit=True)
     # db.execute(create_staff, ('Admin', 'Admin'), commit=True)
-
+    
     p1 = Process(target=run_bot1)
     p2 = Process(target=run_bot2)
 

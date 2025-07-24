@@ -2,21 +2,33 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from loader import dp, db, bot2
+from keyboards.inline.markup import language_markup
 from keyboards.default.markup import rating_markup, uz, back_uz, menu_markup, back_markup, ru, back_ru
-from states.states import Rating
+from states.states import Rating, Register
 from services.database.sql import create_rating, check_user, get_staffs
 
 @dp.message_handler(text="⭐ Baholash")
 @dp.message_handler(text="⭐ Оценить")
 async def rating_handler(message: types.Message, state: FSMContext):
     user = db.execute(check_user, (message.from_user.id, ), fetchone=True)
-    lang = user[2]
-    await message.delete()
-    if lang == 'uz':
-        await message.answer('Buyruqlardan birini tanlang!', reply_markup=rating_markup(uz))
+    if user:
+        lang = user[2]
+        await message.delete()
+        if lang == 'uz':
+            await message.answer('Buyruqlardan birini tanlang!', reply_markup=rating_markup(uz))
+        else:
+            await message.answer('Выберите одну из команд!', reply_markup=rating_markup(ru))
+        await Rating.step_one.set()
     else:
-        await message.answer('Выберите одну из команд!', reply_markup=rating_markup(ru))
-    await Rating.step_one.set()
+        answer = f"""
+Assalomu alaykum <b>{message.from_user.first_name}</b>, men Milliy Mangal Botman.
+Здравствуйте <b>{message.from_user.first_name}</b>, я Mangal Burger Bot.
+
+Tilni tanlag!
+Выберите язык!
+    """
+        await message.answer(text=answer, reply_markup=language_markup)
+        await Register.lang.set()
 
 @dp.message_handler(lambda m: m.text in ["⭐⭐⭐⭐⭐ Hammasi a'lo", "⭐⭐⭐⭐ Yaxshi", "⭐⭐⭐ O'rta", "❤️ Bo'ladi", "👎 Juda yomon"], state=Rating.step_one)
 @dp.message_handler(lambda m: m.text in ["⭐⭐⭐⭐⭐ Всё хорошо", "⭐⭐⭐⭐ Хороший", "⭐⭐⭐ Средний", "❤️ Будет", "👎 Очень плохо"], state=Rating.step_one)

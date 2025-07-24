@@ -6,9 +6,9 @@ import os
 
 from loader import dp, db, bot2, bot
 from keyboards.default.markup import delivery_or_pick_up_markup, uz, ru, back_markup, back_uz, back_ru, menu_markup, cart_markup, correct_delivery_markup, location_markup, delivery_or_pick_up_markup, buy_markup,yes_or_no_markup, remove_keyboard
-from keyboards.inline.markup import cart_plus_minus_markup, cart_callback, chef_yes_or_no_markup, chef_return_markup, chef_return_delivery_markup
+from keyboards.inline.markup import cart_plus_minus_markup, cart_callback, chef_yes_or_no_markup, chef_return_markup, chef_return_delivery_markup, language_markup
 from services.database.sql import check_user, check_cart_empty, get_food_by_id, update_count_cart, delete_food_cart, clean_cart, update_delivery_type, get_branches, get_chef_by_branch, create_order, create_order_items, get_last_order
-from states.states import Cart
+from states.states import Cart, Register
 
 async def is_tashkent_city_api(lat, lon):
     url = "https://nominatim.openstreetmap.org/reverse"
@@ -69,38 +69,49 @@ def get_closest_branch(user_lat, user_lon, branches):
 
 @dp.message_handler(lambda x: x.text in ["🛒 Savatcham", "🛒 Корзинка"])
 async def cart_handler(message: types.Message):
-    await message.delete()
     user = db.execute(check_user, (message.from_user.id, ), fetchone=True)
-    lang = user[2]
-    cart = db.execute(check_cart_empty, (message.from_user.id,),fetchall=True)
-    if lang == 'uz':
-        if cart:
-            answer = ""
-            price = 0
-            for cart_item in cart:
-                food = db.execute(get_food_by_id, (cart_item[2],), fetchone=True)
-                answer += f"{food[2]} ----- {cart_item[3]} ta ----- {food[6] * cart_item[3]} so'm\n"
-                price += food[6] * cart_item[3]
-            answer += f"\nJami: {price}"
-            await message.answer(text="🛒 Savatcha", reply_markup=cart_markup(uz))
-            await message.answer(answer, reply_markup=cart_plus_minus_markup(uz, cart, get_food_by_id))
-            await Cart.step_one.set()
+    if user:
+        lang = user[2]
+        await message.delete()
+        cart = db.execute(check_cart_empty, (message.from_user.id,),fetchall=True)
+        if lang == 'uz':
+            if cart:
+                answer = ""
+                price = 0
+                for cart_item in cart:
+                    food = db.execute(get_food_by_id, (cart_item[2],), fetchone=True)
+                    answer += f"{food[2]} ----- {cart_item[3]} ta ----- {food[6] * cart_item[3]} so'm\n"
+                    price += food[6] * cart_item[3]
+                answer += f"\nJami: {price}"
+                await message.answer(text="🛒 Savatcha", reply_markup=cart_markup(uz))
+                await message.answer(answer, reply_markup=cart_plus_minus_markup(uz, cart, get_food_by_id))
+                await Cart.step_one.set()
+            else:
+                await message.answer('🛒 Savatcha bo\'sh!', reply_markup=menu_markup(uz))
         else:
-            await message.answer('🛒 Savatcha bo\'sh!', reply_markup=menu_markup(uz))
+            if cart:
+                answer = ""
+                price = 0
+                for cart_item in cart:
+                    food = db.execute(get_food_by_id, (cart_item[2],), fetchone=True)
+                    answer += f"{food[3]} ----- {cart_item[3]} шт. ----- {food[6] * cart_item[3]} сум\n"
+                    price += food[6] * cart_item[3]
+                answer += f"\nВсего: {price}"
+                await message.answer(text="🛒 Корзина", reply_markup=cart_markup(ru))
+                await message.answer(answer, reply_markup=cart_plus_minus_markup(ru, cart, get_food_by_id))
+                await Cart.step_one.set()
+            else:
+                await message.answer('🛒 Корзина пуста!', reply_markup=menu_markup(ru))
     else:
-        if cart:
-            answer = ""
-            price = 0
-            for cart_item in cart:
-                food = db.execute(get_food_by_id, (cart_item[2],), fetchone=True)
-                answer += f"{food[3]} ----- {cart_item[3]} шт. ----- {food[6] * cart_item[3]} сум\n"
-                price += food[6] * cart_item[3]
-            answer += f"\nВсего: {price}"
-            await message.answer(text="🛒 Корзина", reply_markup=cart_markup(ru))
-            await message.answer(answer, reply_markup=cart_plus_minus_markup(ru, cart, get_food_by_id))
-            await Cart.step_one.set()
-        else:
-            await message.answer('🛒 Корзина пуста!', reply_markup=menu_markup(ru))
+        answer = f"""
+Assalomu alaykum <b>{message.from_user.first_name}</b>, men Milliy Mangal Botman.
+Здравствуйте <b>{message.from_user.first_name}</b>, я Mangal Burger Bot.
+
+Tilni tanlag!
+Выберите язык!
+    """
+        await message.answer(text=answer, reply_markup=language_markup)
+        await Register.lang.set()
 
 @dp.callback_query_handler(cart_callback.filter(), state=Cart.step_one)
 async def plus_minus_handler(callback: types.CallbackQuery, callback_data: dict):

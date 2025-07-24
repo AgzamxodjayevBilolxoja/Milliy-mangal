@@ -4,33 +4,44 @@ import os
 
 from loader import dp, db
 from keyboards.default.markup import delivery_or_pick_up_markup, uz, ru, back_markup, back_uz, back_ru, menu_markup
-from keyboards.inline.markup import inline_category_markup, inline_food_markup, plus_minus_markup, food_callback
+from keyboards.inline.markup import inline_category_markup, inline_food_markup, plus_minus_markup, food_callback, language_markup
 from services.database.sql import check_user, get_categories, get_products_by_category, get_category_by_name, get_products, get_product_by_name_uz, get_product_by_name_ru, get_food_by_id, insert_cart, check_cart, delete_food_cart, update_count_cart, check_cart_empty
-from states.states import UserMenu
+from states.states import UserMenu, Register
 
 @dp.message_handler(text="🍽 Menyu")
 @dp.message_handler(text="🍽 Меню")
 async def menu_handler(message: types.Message):
-    await message.delete()
     user = db.execute(check_user, (message.from_user.id, ), fetchone=True)
-    lang = user[2]
-    
-    categories = db.execute(get_categories, fetchall=True)
-    cart = db.execute(check_cart_empty, (message.from_user.id, ), fetchall=True)
-    if cart:
-        if lang == "uz":
-            await message.answer('Kategoriyalardan birini tanlang!', reply_markup=back_markup(uz))
-            await message.answer('Kategoriyalar', reply_markup=inline_category_markup(categories, uz))
+    if user:
+        lang = user[2]
+        await message.delete()
+
+        categories = db.execute(get_categories, fetchall=True)
+        cart = db.execute(check_cart_empty, (message.from_user.id, ), fetchall=True)
+        if cart:
+            if lang == "uz":
+                await message.answer('Kategoriyalardan birini tanlang!', reply_markup=back_markup(uz))
+                await message.answer('Kategoriyalar', reply_markup=inline_category_markup(categories, uz))
+            else:
+                await message.answer('Выберите одну из категорий!', reply_markup=back_markup(ru))
+                await message.answer('Категории', reply_markup=inline_category_markup(categories, ru))
+            await UserMenu.category.set()
         else:
-            await message.answer('Выберите одну из категорий!', reply_markup=back_markup(ru))
-            await message.answer('Категории', reply_markup=inline_category_markup(categories, ru))
-        await UserMenu.category.set()
+            if lang == "uz":
+                await message.answer('Buyurtma qilish turini tanlang!', reply_markup=delivery_or_pick_up_markup(uz))
+            else:
+                await message.answer('Выберите тип заказа!', reply_markup=delivery_or_pick_up_markup(ru))
+            await UserMenu.delivery_or_pick_up.set()
     else:
-        if lang == "uz":
-            await message.answer('Buyurtma qilish turini tanlang!', reply_markup=delivery_or_pick_up_markup(uz))
-        else:
-            await message.answer('Выберите тип заказа!', reply_markup=delivery_or_pick_up_markup(ru))
-        await UserMenu.delivery_or_pick_up.set()
+        answer = f"""
+Assalomu alaykum <b>{message.from_user.first_name}</b>, men Milliy Mangal Botman.
+Здравствуйте <b>{message.from_user.first_name}</b>, я Mangal Burger Bot.
+
+Tilni tanlag!
+Выберите язык!
+    """
+        await message.answer(text=answer, reply_markup=language_markup)
+        await Register.lang.set()
 
 @dp.message_handler(lambda x: x.text in [back_uz, back_ru], state=UserMenu.category)
 @dp.message_handler(lambda x: x.text in [back_uz, back_ru], state=UserMenu.delivery_or_pick_up)
