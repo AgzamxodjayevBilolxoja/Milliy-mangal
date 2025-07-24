@@ -15,8 +15,8 @@ def phone_markup(lang):
 
 def menu_markup(lang):
     markup = {
-        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🍽 Menyu')], [KeyboardButton(text="📥 Buyurtmalarim"), KeyboardButton(text="🛒 Savatcham")], [KeyboardButton(text='ℹ️ Biz haqimizda'), KeyboardButton(text="📍 Filiallarimiz")], [KeyboardButton(text='⭐ Baholash')], [KeyboardButton('⚙️ Sozlamalar')]], resize_keyboard=True),
-        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🍽 Меню')], [KeyboardButton(text="📥 Мои заказы"), KeyboardButton(text="🛒 Корзинка")], [KeyboardButton(text='ℹ️ О нас'), KeyboardButton(text="📍 Наши филиалы")], [KeyboardButton(text='⭐ Оценить')], [KeyboardButton('⚙️ Настройки')]], resize_keyboard=True)
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🍽 Menyu')], [KeyboardButton(text="🛒 Savatcham")], [KeyboardButton(text='ℹ️ Biz haqimizda'), KeyboardButton(text="📍 Filiallarimiz")], [KeyboardButton(text='⭐ Baholash')], [KeyboardButton('⚙️ Sozlamalar')]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🍽 Меню')],  [KeyboardButton(text="🛒 Корзинка")], [KeyboardButton(text='ℹ️ О нас'), KeyboardButton(text="📍 Наши филиалы")], [KeyboardButton(text='⭐ Оценить')], [KeyboardButton('⚙️ Настройки')]], resize_keyboard=True)
     }
     return markup.get(lang)
 
@@ -274,3 +274,149 @@ def get_delivermen_markup(delivermen):
         markup.insert(KeyboardButton(text=deliverman[4]))
     markup.add(KeyboardButton(text=back_uz))
     return markup
+
+def delivery_or_pick_up_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🚚 Yetkazib berish"),KeyboardButton(text="🚶‍♂️ Olib ketish")],[KeyboardButton(text=back_uz)]], resize_keyboard=True),
+        ru: ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🚚 Доставка"),KeyboardButton(text="🚶‍♂️ Самовывоз")],[KeyboardButton(text=back_ru)]], resize_keyboard=True)
+    }
+    return markup.get(lang)
+
+def cart_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="📲 Buyurtma berish"),
+                    KeyboardButton(text="🛒 Savatni tozalash"),
+                ],
+                [
+                    KeyboardButton(text=back_uz)
+                ]
+            ], resize_keyboard=True
+        ),
+        ru: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="📲 Сделать заказ"),
+                    KeyboardButton(text="🛒 Очистить корзину")
+                ],
+                [
+                    KeyboardButton(text=back_ru)
+                ]
+            ], resize_keyboard=True
+        )
+    }
+    
+    return markup.get(lang)
+
+def correct_delivery_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text="✅ Ha"),
+                KeyboardButton(text="🟠 O'zgartirish")
+            ],
+            [
+                KeyboardButton(text=back_uz)
+            ]
+        ], resize_keyboard=True
+    ),
+        ru: ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text="✅ Да"),
+                KeyboardButton(text="🟠 Изменить")
+            ],
+            [
+                KeyboardButton(text=back_ru)
+            ]
+        ], resize_keyboard=True
+    )
+    }
+    
+    return markup.get(lang)
+
+def location_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="📍 Joylashuv", request_location=True)
+                ],
+                [
+                    KeyboardButton(text=back_uz)
+                ]
+            ], resize_keyboard=True
+        ), 
+        ru: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="📍 Место положение", request_location=True)
+                ],
+                [
+                    KeyboardButton(text=back_ru)
+                ]
+            ], resize_keyboard=True
+        )
+    }
+    
+    return markup.get(lang)
+
+def buy_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="💵 Naqd to'lov"),
+                    KeyboardButton(text="💳 Karta orqali")
+                ],
+                [
+                    KeyboardButton(text=back_uz)
+                ]
+            ], resize_keyboard=True
+        ),
+        ru: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text="💵 Оплата наличными"),
+                    KeyboardButton(text="💳 Картой")
+                ],
+                [
+                    KeyboardButton(text=back_ru)
+                ]
+            ], resize_keyboard=True
+        )
+    }
+    
+    return markup.get(lang)
+
+def yes_or_no_markup(lang):
+    markup = {
+        uz: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton('✅ Ha'),
+                    KeyboardButton('❌ Yo\'q')
+                ],
+                [
+                    KeyboardButton(back_uz)
+                ]
+            ], resize_keyboard=True
+        ),
+        ru: ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton('✅ Да'),
+                    KeyboardButton('❌ Нет')
+                ],
+                [
+                    KeyboardButton(back_ru)
+                ]
+            ], resize_keyboard=True
+        )
+    }
+    
+    return markup.get(lang)
+

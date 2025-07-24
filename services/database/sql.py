@@ -29,6 +29,10 @@ change_lang = """
 UPDATE users SET lang=? WHERE chat_id=? 
 """
 
+get_user_by_id = """
+SELECT * FROM users WHERE id=?
+"""
+
 create_table_rating = """
 CREATE TABLE IF NOT EXISTS ratings(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -227,4 +231,111 @@ UPDATE staff SET branch=? WHERE id=?
 
 get_delivermen_by_name = """
 SELECT * FROM staff WHERE role='Deliverman' AND name=?
+"""
+
+get_products_by_category = """
+SELECT * FROM foods WHERE category_id=?
+"""
+
+get_category_by_name = """
+SELECT * from category WHERE name_uz=? OR name_ru=?
+"""
+
+get_food_by_id = """
+SELECT * FROM foods WHERE id=?
+"""
+
+create_table_cart = """
+CREATE TABLE IF NOT EXISTS cart(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+user_id INTEGER,
+food_id INTEGER,
+count INTEGER,
+delivery_type VARCHAR
+)
+"""
+
+create_table_order = """
+CREATE TABLE IF NOT EXISTS orders(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+user_id INTEGER,
+latitude FLOAT,
+longitude FLOAT,
+status BOOLEAN
+)
+"""
+
+create_table_order_items = """
+CREATE TABLE IF NOT EXISTS order_items (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+order_id INTEGER,
+food_id INTEGER,
+count INTEGER
+)
+"""
+
+insert_cart = """
+INSERT INTO cart(user_id, food_id, count, delivery_type)
+VALUES(?, ?, ?, ?)
+"""
+
+check_cart = """
+SELECT * FROM cart WHERE user_id=? AND food_id=?
+"""
+
+update_count_cart = """
+UPDATE cart SET count=? WHERE user_id=? AND food_id=?
+"""
+
+delete_food_cart = """
+DELETE FROM cart WHERE user_id=? AND food_id=?
+"""
+
+check_cart_empty = """
+SELECT * FROM cart WHERE user_id=?
+"""
+
+clean_cart = """
+DELETE FROM cart WHERE user_id=?
+"""
+
+update_delivery_type = """
+UPDATE cart SET delivery_type=? WHERE user_id=?
+"""
+
+get_chef_by_branch = """
+SELECT * FROM staff WHERE branch=?
+"""
+
+create_order = """
+INSERT INTO orders(user_id, latitude, longitude, status)
+VALUES(?, ?, ?, ?)
+"""
+
+create_order_items = """
+INSERT INTO order_items(order_id, food_id, count)
+VALUES(?, ?, ?)
+"""
+
+get_last_order = """
+SELECT * FROM orders WHERE user_id=? ORDER BY id DESC LIMIT 1
+"""
+
+delete_order_items = """
+DELETE FROM order_items WHERE order_id=?
+"""
+
+delete_order = """
+DELETE FROM orders WHERE id=?"""
+
+update_status = """
+UPDATE orders SET status=? WHERE user_id=?
+"""
+
+get_staff = """
+SELECT * FROM staff WHERE role=? 
+""" 
+
+get_order_items = """
+SELECT * FROM order_items WHERE order_id=?
 """

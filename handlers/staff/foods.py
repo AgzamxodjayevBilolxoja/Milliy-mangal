@@ -1,10 +1,11 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+import os
 
-from loader import dp2, db
+from loader import dp2, db, bot2
 from keyboards.default.markup import admin_menu_markup, back_uz, back_markup, uz, get_categories_markup, admin_foods_markup, product_markup, admin_update_markup, admin_food_update_markup
 from keyboards.inline.markup import yes_or_no_markup
-from services.database.sql import get_categories, get_category_by_name_uz, add_product, get_products, get_product_by_name_uz, get_category_by_id, delete_product, update_product
+from services.database.sql import get_categories, get_category_by_name_uz, add_product, get_products, get_product_by_name_uz, get_category_by_id, delete_product, update_product, get_food_by_id
 from states.states import AdminMain, AdminProduct, AddProduct
 
 @dp2.message_handler(text="Ovqatlar", state=AdminMain.menu)
@@ -109,6 +110,13 @@ Kategoriya: {category}
 """
     if callback.data == 'yes':
         try:
+            file = await bot2.get_file(image)
+            file_path = file.file_path
+        
+            destination_path = f"photos/{image}.jpg"
+            os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        
+            await bot2.download_file(file_path, destination_path)
             db.execute(add_product, (category_id, name_uz, name_ru, description_uz, description_ru, price, image), commit=True)
             await callback.message.answer_photo(photo=image, caption=answer)
             await callback.message.answer('✅ Mahsulor qo\'shildi!')
@@ -148,6 +156,8 @@ Kategoriya: {category[1]}
 async def delete_product_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     id = data.get('product_id')
+    food = db.execute(get_food_by_id, (id, ), fetchone=True)
+    os.remove(f"photos/{food[7]}.jpg")
     db.execute(delete_product, (id, ), commit=True)
     await message.delete()
     await message.answer("✅ Ovqat o'chirildi!")
@@ -280,9 +290,19 @@ async def update_price_handler(message: types.Message, state: FSMContext):
 async def update_image_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     product_id = data.get('product_id')
-    text = message.photo[-1].file_id
+    image = message.photo[-1].file_id
+    file = await bot2.get_file(image)
+    file_path = file.file_path
+    
+    destination_path = f"photos/{image}.jpg"
+    os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+
+    food = db.execute(get_food_by_id, (product_id, ), fetchone=True)
+    os.remove(f"photos/{food[7]}.jpg")
+    
     sql = update_product('image')
-    db.execute(sql, (text, product_id), commit=True)
+    db.execute(sql, (image, product_id), commit=True)
+    await bot2.download_file(file_path, destination_path)
     await message.delete()
     await message.answer('✅ Mahsulot rasmi o\'zgartirildi!')
     await message.answer('Buyruqlardan birini tanlang!', reply_markup=admin_menu_markup)

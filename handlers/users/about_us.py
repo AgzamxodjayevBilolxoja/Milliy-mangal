@@ -14,6 +14,7 @@ async def about_us_uz_handler(message: types.Message):
 
 Ish vaqti: 24/7
 Tel: +998900910090
+<a href="https://www.instagram.com/milliy.mangal/" >Instagram</a>
 ⬇️ Manzilimiz ⬇️
 """
         await message.answer(answer)
@@ -23,6 +24,7 @@ Tel: +998900910090
 
 Время работы: 24/7
 Tel: +998900910090
+<a href="https://www.instagram.com/milliy.mangal/" >Instagram</a>
 ⬇️ Наш адрес ⬇️
 """
 

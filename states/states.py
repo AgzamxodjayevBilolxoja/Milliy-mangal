@@ -93,3 +93,20 @@ class Staff(StatesGroup):
     get_deliverman = State()
     command_delliverman = State()
     update_deliverman = State()
+
+class UserMenu(StatesGroup):
+    delivery_or_pick_up = State()
+    category = State()
+    food = State()
+    plus_minus = State()
+    cart = State()
+
+class Cart(StatesGroup):
+    step_one = State()
+    delivery = State()
+    set_delivery = State()
+    location = State()
+    buy = State()
+    yes_or_no = State()
+    card = State()
+    

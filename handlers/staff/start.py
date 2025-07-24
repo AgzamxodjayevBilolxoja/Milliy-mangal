@@ -33,6 +33,7 @@ async def password_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     role = data.get('role')
     password = message.text
+    role = 'Admin' if role == 'Admin' else 'Chef' if role == 'Oshpaz' else 'Deliverman'
     staff = db.execute(check_staff, (role, password), fetchone=True)
     await message.delete()
     if staff:
