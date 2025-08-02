@@ -10,39 +10,6 @@ from keyboards.inline.markup import cart_plus_minus_markup, cart_callback, chef_
 from services.database.sql import check_user, check_cart_empty, get_food_by_id, update_count_cart, delete_food_cart, clean_cart, update_delivery_type, get_branches, get_chef_by_branch, create_order, create_order_items, get_last_order
 from states.states import Cart, Register
 
-async def is_tashkent_city_api(lat, lon):
-    url = "https://nominatim.openstreetmap.org/reverse"
-    params = {
-        "format": "json",
-        "lat": lat,
-        "lon": lon,
-        "zoom": 10,
-        "addressdetails": 1,
-    }
-
-    headers = {
-        "User-Agent": "milliy_mangal_bot/1.0 (agzamxodjayevbilolxoja@gmail.com)"
-    }
-
-    try:
-        response = requests.get(url, params=params, headers=headers, timeout=5)
-        data = response.json()
-        address = data.get("address", {})
-
-        city = address.get("city", "") or address.get("town", "") or address.get("village", "")
-        state = address.get("state", "")
-        if city and city == 'Toshkent':
-            return True
-        if state and state == 'Toshkent':
-            return True
-
-        return False
-
-    except Exception as e:
-        print("API xatosi:", e)
-        return False
-
-
 def calculate_distance(lat1, lon1, lat2, lon2):
     R = 6371
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
@@ -366,7 +333,6 @@ async def location_handler(message: types.Message, state: FSMContext):
     longitude = message.location.longitude
     cart = db.execute(check_cart_empty, (message.from_user.id, ), fetchall=True)
     
-    is_tashkent = await is_tashkent_city_api(latitude, longitude)
     delivery_type = cart[0][4]
     price = 0
     for cart_item in cart:
@@ -380,12 +346,15 @@ async def location_handler(message: types.Message, state: FSMContext):
     if lang == 'uz':
         answer = f"Jami narx: {price} so'm bo'ldi"
         if delivery_type == 'delivery':
-            if is_tashkent:
-                answer += "\nYetkazib berish xizmati uchun esa yana 30000 so'm qo'shiladi."
-                await message.answer(answer)
+            if distance < 3:
+                answer += "\nYetkazib berish xizmati uchun esa yana 10 000 so'm qo'shiladi."
+            elif 3 < distance < 5:
+                answer += "\nYetkazib berish xizmati uchun esa yana 15 000 so'm qo'shiladi."
+            elif 5 < distance < 13:
+                answer += "\nYetkazib berish xizmati uchun esa yana 30 000 so'm qo'shiladi."
             else:
-                answer += "\nYetkazib berish xizmati uchun esa yana 30000 so'm + (kelishiladi) qo'shiladi."
-                await message.answer(answer)
+                answer += "\nYetkazib berish xizmati uchun esa yana 30 000 so'm + (kelishiladi) qo'shiladi."
+            await message.answer(answer)
         else:
             text = f"""
 🏢 Eng yaqin filial:
@@ -399,12 +368,15 @@ async def location_handler(message: types.Message, state: FSMContext):
     else:
         answer = f"Общая цена: {price} сум"
         if delivery_type == 'delivery':
-            if is_tashkent:
+            if distance < 3:
+                answer += "\nЕще 10 000 сум будет добавлено за доставку."
+            elif 3 < distance < 5:
+                answer += "\nЕще 15 000 сум будет добавлено за доставку."
+            elif 5 < distance < 13:
                 answer += "\nЕще 30 000 сум будет добавлено за доставку."
-                await message.answer(answer)
             else:
                 answer += "\nЗа доставку дополнительно будет добавлено 30 000 сум + (договорная)."
-                await message.answer(answer)
+            await message.answer(answer)
         else:
             text = f"""
 🏢 Ближайший филиал:
@@ -455,7 +427,7 @@ async def yes_handler(message: types.Message, state: FSMContext):
     
     if cart[0][4] == 'delivery':
         answer += f"\nBuyurtma turi: 🚚 Yetkazib berish\nQabul qilasizmi?"
-        await bot2.send_message(chat_id=chef[1], text=answer, reply_markup=chef_return_delivery_markup(message.from_user.id))
+        await bot2.send_message(chat_id=chef[1], text=answer, reply_markup=chef_return_delivery_markup(message.from_user.id, 'delivery'))
     else:
         answer += f"\nBuyurtma turi: 🚶‍♂️ Olib ketish"
         await bot2.send_message(chat_id=chef[1], text=answer, reply_markup=chef_return_markup(message.from_user.id))
@@ -485,11 +457,11 @@ async def card_handler(message: types.Message):
         delivery_type = food[4]
         price += food[6] * cart_item[3]
     if lang == 'uz':
-        await message.answer(f'5614 6822 1102 7356\n\nShu karta raqamiga {price} so\'m pul tashlang!', reply_markup=back_markup(uz))
+        await message.answer(f'5614 6822 1102 7356\n\nShu karta raqamiga {price} so\'m pul tashlang!\nTo\'lov to\'g\'riligini bilishimiz uchun to\'lov rasmini yuboring', reply_markup=back_markup(uz))
         if delivery_type == 'delivery':
             await message.answer('Esingizdan chiqmasin yetkazib berish uchun yana 30000 so\'m + naqd pul to\'aysiz')
     else:
-        await message.answer(f'5614 6822 1102 7356\n\nОплатите {price} сум к этому номеру карты!', reply_markup=back_markup(ru))
+        await message.answer(f'5614 6822 1102 7356\n\nОплатите {price} сум к этому номеру карты!\nПожалуйста, пришлите нам фотографию вашего платежа, чтобы мы могли проверить его правильность.', reply_markup=back_markup(ru))
         if delivery_type == 'delivery':
             await message.answer('Не забудьте, вы заплатите еще 30 000 сум + наличные за доставку.')
     await Cart.card.set()

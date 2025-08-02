@@ -130,7 +130,7 @@ async def deliverman_handler(callback: types.CallbackQuery, callback_data: dict)
                 answer += '\nTo\'angan'
             await bot2.send_message(chat_id=int(deliverman_chat_id), text=answer)
             await bot2.send_location(chat_id=int(deliverman_chat_id), latitude=order[2], longitude=order[3])
-            await bot.send_message(chat_id=user_chat_id, text="▶️ Yetkazilmoqda!\n▶️ Yetkazilmoqda!")
+            await bot.send_message(chat_id=user_chat_id, text="▶️ Yetkazilmoqda!\n▶️ Доставляется!")
             await callback.message.delete()
         else:
             await callback.answer('Sizda bu buyruq uchun ruxsat yo\'q!')
